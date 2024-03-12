@@ -5,7 +5,6 @@ import spaces.Spaces;
 import sweep.SimStateSweep;
 import sim.util.distribution.Normal;
 
-
 public class Environment extends SimStateSweep {
 	int gridWidth = 100;
 	int gridHeight = 100;
@@ -16,7 +15,7 @@ public class Environment extends SimStateSweep {
 	boolean aggregate = false;
 	int searchRadius = 1;
 
-	//new variables
+	// new variables
 	int recoveryTime = 20;
 	int recoveryRate;
 	int recoveryError = 5;
@@ -26,13 +25,16 @@ public class Environment extends SimStateSweep {
 	double baseInfectionRate;
 	double randMove = 0.3;
 	boolean shareSpace = true;
-	public enum Status {SUSCEPTIBLE, EXPOSED, INFECTED, RECOVERED};
+
+	public enum Status {
+		SUSCEPTIBLE, EXPOSED, INFECTED, RECOVERED
+	};
+
 	public int clock = 0;
 	public int quarantineTime = 10;
 
-
 	// need to implement quarantine logic?
-	
+
 	public Environment(long seed) {
 		super(seed);
 		// TODO Auto-generated constructor stub
@@ -50,17 +52,16 @@ public class Environment extends SimStateSweep {
 
 	public void makeAgents() {
 
-
 		if (oneAgentPerCell) {
 			int size = gridWidth * gridHeight;
-			if(numAgents > size) {
+			if (numAgents > size) {
 				numAgents = size;
 				System.out.println("Changed the number of agents to" + numAgents);
 			}
 		}
 
 		// Normal distribution for compliance
-		Normal normalDist = new Normal (complianceAvg, complianceSD, random);
+		Normal normalDist = new Normal(complianceAvg, complianceSD, random);
 
 		// Create Patient zero (INFECTED)
 		int x = random.nextInt(gridWidth);
@@ -69,40 +70,41 @@ public class Environment extends SimStateSweep {
 		int ydir = random.nextInt(3) - 1; // -1, 0, or 1
 		double compliance = normalDist.nextDouble();
 		compliance = Math.max(0, Math.min(compliance, 1)); // compliance between 0 and 1
-		//compliance = random.nextDouble(); //TODO edit how it is calculated if needed 
+		// compliance = random.nextDouble(); //TODO edit how it is calculated if needed
 
-		Agent patientZero = new Agent (x, y, xdir, ydir, compliance, Agent.Status.INFECTED);
+		Agent patientZero = new Agent(x, y, xdir, ydir, compliance, Agent.Status.INFECTED);
 		sparseSpace.setObjectLocation(patientZero, x, y);
 		schedule.scheduleRepeating(patientZero);
 
 		// Create the rest of the agents (SUSCEPTIBLE)
-		for (int i = 1; i < numAgents; i++){
+		for (int i = 1; i < numAgents; i++) {
 			int tempx = random.nextInt(gridWidth);
 			int tempy = random.nextInt(gridHeight);
-			if (oneAgentPerCell){
+			if (oneAgentPerCell) {
 				Bag objectsAtLocation = sparseSpace.getObjectsAtLocation(tempx, tempy);
-				while (objectsAtLocation != null && !objectsAtLocation.isEmpty()){
+				while (objectsAtLocation != null && !objectsAtLocation.isEmpty()) {
 					tempx = random.nextInt(gridWidth);
 					tempy = random.nextInt(gridHeight);
 					objectsAtLocation = sparseSpace.getObjectsAtLocation(tempx, tempy);
-				
+
 				}
 			}
 
-		int tempXdir = random.nextInt(3) - 1;
-        int tempYdir = random.nextInt(3) - 1;
-		double tempCompliance = normalDist.nextDouble();
-		tempCompliance = Math.max(0, Math.min(compliance, 1)); // compliance between 0 and 1
-		//tempCompliance = random.nextDouble(); //TODO edit how it is calculated if needed 
+			int tempXdir = random.nextInt(3) - 1;
+			int tempYdir = random.nextInt(3) - 1;
+			double tempCompliance = normalDist.nextDouble();
+			tempCompliance = Math.max(0, Math.min(compliance, 1)); // compliance between 0 and 1
+			// tempCompliance = random.nextDouble(); //TODO edit how it is calculated if
+			// needed
 
-		Agent a = new Agent (tempx, tempy, tempXdir, tempYdir, tempCompliance, Agent.Status.SUSCEPTIBLE);
-		
-		sparseSpace.setObjectLocation(a, tempx, tempy);
-		schedule.scheduleRepeating(a);
-	
+			Agent a = new Agent(tempx, tempy, tempXdir, tempYdir, tempCompliance, Agent.Status.SUSCEPTIBLE);
+
+			sparseSpace.setObjectLocation(a, tempx, tempy);
+			schedule.scheduleRepeating(a);
+
 		}
 	}
-	
+
 	public void start() {
 		super.start();
 		spaces = Spaces.SPARSE;
@@ -173,6 +175,5 @@ public class Environment extends SimStateSweep {
 	public void setSearchRadius(int searchRadius) {
 		this.searchRadius = searchRadius;
 	}
-	
-	
+
 }
