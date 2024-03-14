@@ -9,26 +9,30 @@ import sim.util.distribution.Normal;
 public class Environment extends SimStateSweep {
 	int gridWidth = 100;
 	int gridHeight = 100;
-	int numAgents = 50;
 	boolean oneAgentPerCell = false;
 	double pActive = 1;
 	double p = 1;
 	boolean aggregate = false;
-	int searchRadius = 1;
-
-	//new variables
-	int recoveryTime = 20;
-	int recoveryRate;
+	
 	int recoveryError = 5;
-	double complianceAvg;
-	double complianceSD;
-	int burninTime;
-	double baseInfectionRate;
+
 	double randMove = 0.3;
 	boolean shareSpace = true;
 	public enum Status {SUSCEPTIBLE, EXPOSED, INFECTED, RECOVERED};
 	public int clock = 0;
+	
+	//parameter sweeps
+	int searchRadius = 1;
+	int recoveryTime = 50;
+	int numAgents = 150;
+	int recoveryRate = 100;
+	double complianceAvg = 0.1;
+	double complianceSD = 0.05;
+	int burninTime = 10;
+	double baseInfectionRate = 0.8;
 	public int quarantineTime = 10;
+
+
 
 
 	// need to implement quarantine logic?
