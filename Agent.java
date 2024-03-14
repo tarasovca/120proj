@@ -97,13 +97,25 @@ public class Agent implements Steppable {
 		}
 	}
 
+//	void checkRecover(Environment env) {
+//		int recoveryTime = env.recoveryTime + env.random.nextInt(2 * env.recoveryError) - env.recoveryError;
+//		if (this.sickTime >= recoveryTime && env.random.nextBoolean(env.recoveryRate)) {
+//			this.status = Environment.Status.RECOVERED;
+//			this.inQuarantine = false;
+//		}
+//	}
+	
 	void checkRecover(Environment env) {
-		int recoveryTime = env.recoveryTime + env.random.nextInt(2 * env.recoveryError) - env.recoveryError;
-		if (this.sickTime >= recoveryTime && env.random.nextBoolean(env.recoveryRate)) {
-			this.status = Environment.Status.RECOVERED;
-			this.inQuarantine = false;
-		}
+	    // Calculate recoveryTime with some randomness
+	    int recoveryTime = env.recoveryTime + env.random.nextInt(2 * env.recoveryError) - env.recoveryError;
+
+	    // Check if the agent's sickTime is equal to recoveryTime
+	    if (this.sickTime == recoveryTime) {
+	        this.status = Environment.Status.RECOVERED;
+	        this.inQuarantine = false;
+	    }
 	}
+
 
 	// double check move
 	public void move(Environment state) {
@@ -134,22 +146,21 @@ public class Agent implements Steppable {
 	}
 
 	void interact(Environment env, Bag neighbors) {
-		if (neighbors.isEmpty()) {
-			return;
-		}
-		for (int i = 0; i < neighbors.numObjs; i++) {
-			Agent neighbor = (Agent) neighbors.objs[i];
-			if (neighbor.status == Environment.Status.INFECTED) {
-				boolean becomesExposed = env.random.nextDouble() < env.baseInfectionRate;
-				if (!becomesExposed) {
-					this.status = Environment.Status.EXPOSED;
-					return;
-				}
-			}
-		}
-		return;
-
+	    if (neighbors.isEmpty()) {
+	        return;
+	    }
+	    for (int i = 0; i < neighbors.numObjs; i++) {
+	        Agent neighbor = (Agent) neighbors.objs[i];
+	        if (neighbor.status == Environment.Status.INFECTED) {
+	            boolean becomesExposed = env.random.nextDouble() < env.baseInfectionRate;
+	            if (becomesExposed) {
+	                this.status = Environment.Status.EXPOSED;
+	                return;
+	            }
+	        }
+	    }
 	}
+
 
 	public void placeAgent(Environment state) {
 		x = state.sparseSpace.stx(x + xdir);
