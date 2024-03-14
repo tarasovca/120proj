@@ -151,10 +151,10 @@ public class Agent implements Steppable {
 
 	}
 
-//	public void placeAgent(Environment state) {
-//		x = state.sparseSpace.stx(x + xdir);
-//		y = state.sparseSpace.stx(y + ydir);
-//		state.sparseSpace.setObjectLocation(this, x, y);
-//	}
+	public void placeAgent(Environment state) {
+		x = state.sparseSpace.stx(x + xdir);
+		y = state.sparseSpace.stx(y + ydir);
+		state.sparseSpace.setObjectLocation(this, x, y);
+	}
 
 }
