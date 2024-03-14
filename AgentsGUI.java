@@ -31,14 +31,14 @@ public class AgentsGUI extends GUIStateSweep {
         agentsPortrayal.setField(env.sparseSpace);
         agentsPortrayal.setPortrayalForAll(new OvalPortrayal2D() {
             public void draw(Object object, java.awt.Graphics2D graphics, sim.portrayal.DrawInfo2D info) {
+            	Agent agent = (Agent) object;
                 if (object instanceof Agent) {
-                    Agent agent = (Agent) object;
                     if (agent.inQuarantine) {
                         paint = Color.RED; // Quarantined agents
                     } else if (agent.status == Environment.Status.SUSCEPTIBLE) {
                         paint = Color.GREEN; // Susceptible agents
                     } else if (agent.status == Environment.Status.EXPOSED) {
-                        paint = Color.YELLOW; // Exposed agents
+                        paint = Color.ORANGE; // Exposed agents
                     } else if (agent.status == Environment.Status.INFECTED) {
                         paint = Color.RED; // Infected agents
                     } else if (agent.status == Environment.Status.RECOVERED) {
@@ -46,6 +46,13 @@ public class AgentsGUI extends GUIStateSweep {
                     }
                 }
                 super.draw(object, graphics, info);
+                // If the agent is quarantined, draw a black border around it
+                if (agent.inQuarantine) {
+                    graphics.setColor(Color.BLACK);
+                    graphics.drawOval((int) (info.draw.x - info.draw.width / 2.0),
+                                      (int) (info.draw.y - info.draw.height / 2.0),
+                                      (int) info.draw.width, (int) info.draw.height);
+                }
             }
         });
 
