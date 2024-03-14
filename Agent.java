@@ -25,7 +25,8 @@ public class Agent implements Steppable {
 	Environment.Status status;
 
 	// Agent constructor
-	public Agent(int x, int y, int xdir, int ydir, double compliance, Status status) {
+	public Agent(int x, int y, int xdir, int ydir, double compliance, Status status, boolean inQuarantine,
+			int sickTime) {
 		super();
 		this.x = x;
 		this.y = y;
@@ -33,28 +34,55 @@ public class Agent implements Steppable {
 		this.ydir = ydir;
 		this.status = status;
 		this.compliance = compliance;
-		this.inQuarantine = false;
+		this.inQuarantine = inQuarantine;
+		this.sickTime = 0;
 	}
 
 	@Override
 	public void step(SimState state) {
 		Environment env = (Environment) state;
+		env.clock++;
 
 		if (this.status == Environment.Status.EXPOSED) {
 			this.status = Environment.Status.INFECTED;
-			return; // might need to refine logic?
+			// return; // no need to return anything?
 		}
 		// Check quarantine
 		if (this.status == Environment.Status.INFECTED) {
 			this.sickTime++;
-			if (env.clock >= env.burninTime && this.inQuarantine) {
-				checkRecover(env);
+			if (env.clock >= env.burninTime) {
+				if (this.inQuarantine) {
+					checkRecover(env);
+				}
 				if (this.sickTime > env.quarantineTime) {
 					this.inQuarantine = false;
+				}
+				checkQuarantine(env);
+				checkRecover(env);
+				if (this.inQuarantine) {
+					return;
 				}
 			}
 
 		}
+
+		// According to the model screenshot
+		else if (!this.inQuarantine) {
+			move(env);
+            Bag neighbors = findSickNeighbors(env);
+            interact(env, neighbors);
+			// ADD further steps TODO
+
+		} else if (this.inQuarantine) {
+			if (this.sickTime >= env.quarantineTime) {
+				checkRecover(env);
+			} else {
+				this.sickTime++;
+			}
+			return;
+
+		}
+
 		if (!this.inQuarantine) {
 			move(env);
 			if (this.status == Status.SUSCEPTIBLE) {
@@ -93,17 +121,41 @@ public class Agent implements Steppable {
 
 	// implement TODO
 	Bag findSickNeighbors(Environment env) {
+		Bag neighbors = env.sparseSpace.getMooreNeighbors(this.x, this.y, env.searchRadius, SparseGrid2D.TOROIDAL,
+				false);
+		Bag sickNeighbors = new Bag();
+		for (int i = 0; i < neighbors.numObjs; i++) {
+			Agent a = (Agent) neighbors.objs[i];
+			if (a.status == Environment.Status.INFECTED && !a.inQuarantine) {
+				sickNeighbors.add(a);
+			}
+		}
+		return sickNeighbors;
 
 	}
 
 	void interact(Environment env, Bag neighbors) {
+		if (neighbors.isEmpty()) {
+			return;
+		}
+		for (int i = 0; i < neighbors.numObjs; i++) {
+			Agent neighbor = (Agent) neighbors.objs[i];
+			if (neighbor.status == Environment.Status.INFECTED) {
+				boolean becomesExposed = env.random.nextDouble() < env.baseInfectionRate;
+				if (becomesExposed) {
+					this.status = Environment.Status.EXPOSED;
+					return;
+				}
+			}
+		}
+		return;
 
 	}
 
-	public void placeAgent(Environment state) {
-		x = state.sparseSpace.stx(x + xdir);
-		y = state.sparseSpace.stx(y + ydir);
-		state.sparseSpace.setObjectLocation(this, x, y);
-	}
+//	public void placeAgent(Environment state) {
+//		x = state.sparseSpace.stx(x + xdir);
+//		y = state.sparseSpace.stx(y + ydir);
+//		state.sparseSpace.setObjectLocation(this, x, y);
+//	}
 
 }
