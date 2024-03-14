@@ -141,7 +141,7 @@ public class Agent implements Steppable {
 			Agent neighbor = (Agent) neighbors.objs[i];
 			if (neighbor.status == Environment.Status.INFECTED) {
 				boolean becomesExposed = env.random.nextDouble() < env.baseInfectionRate;
-				if (becomesExposed) {
+				if (!becomesExposed) {
 					this.status = Environment.Status.EXPOSED;
 					return;
 				}
