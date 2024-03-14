@@ -11,6 +11,9 @@ public class Environment extends SimStateSweep {
 	int gridHeight = 100;
 	int numAgents = 50;
 	boolean oneAgentPerCell = false;
+	double pActive = 1;
+	double p = 1;
+	boolean aggregate = false;
 	int searchRadius = 1;
 
 	//new variables
@@ -139,6 +142,29 @@ public class Environment extends SimStateSweep {
 		this.oneAgentPerCell = oneAgentPerCell;
 	}
 
+	public double getpActive() {
+		return pActive;
+	}
+
+	public void setpActive(double pActive) {
+		this.pActive = pActive;
+	}
+
+	public double getP() {
+		return p;
+	}
+
+	public void setP(double p) {
+		this.p = p;
+	}
+
+	public boolean isAggregate() {
+		return aggregate;
+	}
+
+	public void setAggregate(boolean aggregate) {
+		this.aggregate = aggregate;
+	}
 
 	public int getSearchRadius() {
 		return searchRadius;
