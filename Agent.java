@@ -25,7 +25,7 @@ public class Agent implements Steppable {
 	Environment.Status status;
 
 	// Agent constructor
-	public Agent(int x, int y, int xdir, int ydir, double compliance, Status status, boolean inQuarantine,
+	public Agent(int x, int y, int xdir, int ydir, double compliance, Environment.Status status, boolean inQuarantine,
 			int sickTime) {
 		super();
 		this.x = x;
