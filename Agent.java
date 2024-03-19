@@ -16,6 +16,8 @@ public class Agent implements Steppable {
 	int y;
 	int xdir;
 	int ydir;
+	
+
 
 	// new variables
 	double compliance; // probability of quarantine compliance
@@ -70,7 +72,6 @@ public class Agent implements Steppable {
 			move(env);
             Bag neighbors = findSickNeighbors(env);
             interact(env, neighbors);
-			// ADD further steps TODO
 
 		} else if (this.inQuarantine) {
 			if (this.sickTime >= env.quarantineTime) {
@@ -97,19 +98,12 @@ public class Agent implements Steppable {
 		}
 	}
 
-//	void checkRecover(Environment env) {
-//		int recoveryTime = env.recoveryTime + env.random.nextInt(2 * env.recoveryError) - env.recoveryError;
-//		if (this.sickTime >= recoveryTime && env.random.nextBoolean(env.recoveryRate)) {
-//			this.status = Environment.Status.RECOVERED;
-//			this.inQuarantine = false;
-//		}
-//	}
 	
 	void checkRecover(Environment env) {
-	    // Calculate recoveryTime with some randomness
+		// calculate recovery time randomly
 	    int recoveryTime = env.recoveryTime + env.random.nextInt(2 * env.recoveryError) - env.recoveryError;
 
-	    // Check if the agent's sickTime is equal to recoveryTime
+	    // check if sickTime == recoveryTime
 	    if (this.sickTime == recoveryTime) {
 	        this.status = Environment.Status.RECOVERED;
 	        this.inQuarantine = false;
@@ -130,7 +124,7 @@ public class Agent implements Steppable {
 
 	}
 
-	// implement TODO
+
 	Bag findSickNeighbors(Environment env) {
 		Bag neighbors = env.sparseSpace.getMooreNeighbors(this.x, this.y, env.searchRadius, SparseGrid2D.TOROIDAL,
 				false);
